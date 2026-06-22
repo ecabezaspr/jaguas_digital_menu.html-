@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Jaguas Bakery – Menú Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold:       #C9A056;
+      --gold-lt:    #E8CC88;
+      --gold-dim:   rgba(201,160,86,0.35);
+      --cream:      #F0E0C0;
+      --cream-dim:  #9A8468;
+      --bg:         #0D0705;
+      --bg2:        #1C1008;
+      --bg3:        #281A0C;
+    }
+
+    html, body {
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'Raleway', sans-serif;
+    }
+
+    /* ── SCALER: always fill screen at 1920×1080 ratio ── */
+    .scaler {
+      width: 1920px;
+      height: 1080px;
+      transform-origin: top left;
+      position: relative;
+      background: var(--bg);
+    }
+
+    /* ════════════════════════════════════
+       SHARED HEADER
+    ════════════════════════════════════ */
+    .site-header {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 108px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 56px;
+      border-bottom: 1px solid var(--gold-dim);
+      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg) 100%);
+      z-index: 20;
+    }
+
+    .logo-block { display: flex; flex-direction: column; }
+    .logo-name {
+      font-family: 'Raleway', sans-serif;
+      font-size: 40px; font-weight: 700;
+      letter-spacing: 14px; text-transform: uppercase;
+      color: var(--gold-lt); line-height: 1;
+    }
+    .logo-tag {
+      font-size: 10px; font-weight: 400;
+      letter-spacing: 5px; text-transform: uppercase;
+      color: var(--cream-dim); margin-top: 6px;
+    }
+
+    .header-center { text-align: center; }
+    .header-center h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; color: var(--gold);
+      letter-spacing: 7px; text-transform: uppercase;
+    }
+    .header-orn {
+      display: flex; align-items: center;
+      justify-content: center; gap: 12px; margin-top: 7px;
+    }
+    .header-orn span { height: 1px; width: 55px; background: var(--gold-dim); }
+    .header-orn em {
+      font-size: 10px; color: var(--cream-dim);
+      letter-spacing: 4px; font-style: normal;
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 10px;
+    }
+    .nav-dots { display: flex; gap: 8px; }
+    .nd {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold-dim);
+      transition: background 0.4s, transform 0.4s;
+    }
+    .nd.on { background: var(--gold); transform: scale(1.3); }
+    .slide-counter {
+      font-size: 10px; letter-spacing: 4px;
+      color: var(--cream-dim); font-weight: 500;
+    }
+
+    /* ════════════════════════════════════
+       SHARED FOOTER
+    ════════════════════════════════════ */
+    .site-footer {
+      position: absolute; bottom: 4px; left: 0; right: 0;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 56px;
+      border-top: 1px solid var(--gold-dim);
+      background: linear-gradient(0deg, var(--bg3) 0%, var(--bg) 100%);
+      z-index: 20;
+    }
+
+    .footer-qr { display: flex; align-items: center; gap: 14px; }
+    .footer-qr img {
+      width: 64px; height: 64px;
+      border-radius: 5px; border: 1px solid var(--gold-dim);
+      padding: 3px; background: #fff;
+    }
+    .qr-label { display: flex; flex-direction: column; gap: 3px; }
+    .qr-label strong {
+      font-size: 10px; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--gold); font-weight: 700;
+    }
+    .qr-label span { font-size: 9px; color: var(--cream-dim); letter-spacing: 1px; }
+
+    .footer-tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-size: 17px;
+      color: var(--cream-dim); letter-spacing: 1px;
+      text-align: center;
+    }
+    .footer-tagline strong { color: var(--gold-lt); font-style: italic; }
+
+    .footer-social {
+      text-align: right; color: var(--cream-dim);
+    }
+    .footer-social strong {
+      display: block; font-size: 14px;
+      letter-spacing: 3px; color: var(--gold-lt); margin-bottom: 3px;
+    }
+    .footer-social span { font-size: 10px; letter-spacing: 2px; }
+
+    /* ════════════════════════════════════
+       PROGRESS BAR
+    ════════════════════════════════════ */
+    #progress-bar {
+      position: absolute; bottom: 0; left: 0;
+      height: 4px; width: 0;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-lt));
+      z-index: 100;
+      transition: width linear;
+    }
+
+    /* ════════════════════════════════════
+       SLIDES
+    ════════════════════════════════════ */
+    .slide {
+      position: absolute;
+      top: 108px; left: 0; right: 0; bottom: 94px;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      display: flex;
+    }
+    .slide.active { opacity: 1; }
+
+    /* ─── MENU COLUMN ─── */
+    .menu-col {
+      flex: 0 0 1080px;
+      padding: 28px 44px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .section-head {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px; letter-spacing: 6px;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 10px; margin-top: 18px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .section-head:first-child { margin-top: 0; }
+    .section-head::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--gold-dim);
+    }
+
+    .items-grid { display: grid; gap: 0; }
+    .items-grid.one { grid-template-columns: 1fr; }
+    .items-grid.two { grid-template-columns: 1fr 1fr; column-gap: 36px; }
+
+    .mi {
+      display: flex; align-items: baseline;
+      padding: 5.5px 0;
+      border-bottom: 1px solid rgba(201,160,86,0.08);
+    }
+    .mi:last-child { border-bottom: none; }
+
+    .mi-name {
+      font-size: 13px; font-weight: 500;
+      color: var(--cream); letter-spacing: 0.3px; flex-shrink: 0;
+    }
+    .mi-name small {
+      display: block; font-size: 9.5px;
+      color: var(--cream-dim); font-weight: 300;
+      margin-top: 1px; letter-spacing: 0.2px;
+    }
+    .mi-dots {
+      flex: 1; border-bottom: 1px dotted rgba(201,160,86,0.2);
+      margin: 0 8px; min-width: 12px;
+    }
+    .mi-price {
+      font-size: 12.5px; font-weight: 600;
+      color: var(--gold); white-space: nowrap; letter-spacing: 0.3px;
+    }
+
+    .badge {
+      display: inline-block; font-size: 7.5px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--bg); background: var(--gold);
+      padding: 2px 5px; border-radius: 2px;
+      margin-left: 6px; font-weight: 700;
+      vertical-align: middle;
+    }
+    .badge.new { background: #7BAE6E; color: #fff; }
+
+    .divider {
+      height: 1px; width: 100%; margin: 12px 0;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+
+    .footnote {
+      font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--cream-dim); text-align: center; margin-top: 8px;
+    }
+
+    /* ─── PHOTO PANEL ─── */
+    .photo-panel {
+      flex: 1;
+      display: flex; flex-direction: column;
+      gap: 5px;
+      padding: 14px 14px 14px 0;
+    }
+    .photo-panel.landscape { flex-direction: row; }
+
+    .pf {
+      flex: 1; border-radius: 8px;
+      overflow: hidden; position: relative;
+    }
+    .pf img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.85) saturate(1.15);
+    }
+    .pf::after {
+      content: ''; position: absolute; inset: 0;
+      border: 1px solid rgba(201,160,86,0.22);
+      border-radius: 8px; pointer-events: none;
+    }
+
+    /* ── CAFÉ PRICE ROW ── */
+    .cafe-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline; padding: 5px 0;
+      border-bottom: 1px solid rgba(201,160,86,0.08);
+    }
+    .cafe-row-name { font-size: 13px; font-weight: 500; color: var(--cream); }
+    .cafe-row-prices { font-size: 11.5px; color: var(--cream-dim); font-weight: 300; }
+    .cafe-row-prices strong { color: var(--gold); font-weight: 600; }
+
+    /* ── LIBRAS TABLE ── */
+    .libras-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 32px;
+    }
+
+    /* ════════════════════════════════════
+       SLIDE 2 two-col override
+    ════════════════════════════════════ */
+    #s2 .menu-col { flex: 0 0 1240px; }
+
+  </style>
+</head>
+<body>
+
+<div class="scaler" id="scaler">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header class="site-header">
+    <div class="logo-block">
+      <div class="logo-name">Jaguas Bakery</div>
+      <div class="logo-tag">Pan Artesanal · Etiqueta Limpia · Puerto Rico</div>
+    </div>
+
+    <div class="header-center">
+      <h1 id="slide-title">Panes Artesanales</h1>
+      <div class="header-orn">
+        <span></span>
+        <em id="slide-sub">horneados diariamente</em>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="nav-dots">
+        <div class="nd on" id="d0"></div>
+        <div class="nd" id="d1"></div>
+        <div class="nd" id="d2"></div>
+      </div>
+      <div class="slide-counter" id="counter">1 / 3</div>
+    </div>
+  </header>
+
+  <!-- ══════════ SLIDE 1 — PANES ARTESANALES ══════════ -->
+  <div class="slide active" id="s0">
+
+    <div class="menu-col">
+
+      <div class="items-grid one">
+
+        <div class="mi">
+          <div class="mi-name">Pan Masa Madre <span class="badge new">Nuevo</span><small>Masa madre con semillas y corteza crujiente</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$4.75</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan Integral<small>Masa integral – rústico y nutritivo</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$5.25</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan Campesino<small>Masa integral – rústico y artesanal</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$7.50</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Cranberry, Nueces &amp; Chocolate<small>Pan masa madre con frutos secos y chispas de chocolate</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$4.50</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Focaccia Original<small>Aceite de oliva, sal gruesa y hierbas finas</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$4.25</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Focaccia Parmesano<small>Con queso parmesano, romero, ajo y sal gruesa</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$5.25</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Focaccia Romero &amp; Orégano<small>Con parmesano, romero, orégano y sal</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$4.25</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan de Centeno<small>Rye bread estilo europeo, digestivo y aromático</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$6.50</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan Baguette<small>Crocante afuera, suave y esponjoso por dentro</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$3.75</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan Ciabatta<small>Pan italiano poroso y artesanal</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$5.50</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan Ciabatta Mini<small>Perfecto para acompañar</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$1.50</div>
+        </div>
+
+        <div class="mi">
+          <div class="mi-name">Pan de Granos Ancestrales <span class="badge">Signature</span><small>Ajonjolí, semillas, lino, nueces y granos integrales</small></div>
+          <div class="mi-dots"></div><div class="mi-price">$7.50</div>
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+      <div class="footnote">Panes horneados diariamente · Ingredientes etiqueta limpia · Sin preservativos artificiales</div>
+    </div>
+
+    <div class="photo-panel">
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=820&q=85&fit=crop" alt="Pan artesanal">
+      </div>
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=820&q=85&fit=crop" alt="Masa madre">
+      </div>
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=820&q=85&fit=crop" alt="Focaccia">
+      </div>
+    </div>
+
+  </div><!-- /s0 -->
+
+
+  <!-- ══════════ SLIDE 2 — SANDWICHES ══════════ -->
+  <div class="slide" id="s1">
+
+    <div class="menu-col">
+
+      <div class="items-grid two">
+
+        <!-- LEFT: ESPECIALIDADES -->
+        <div>
+          <div class="section-head" style="margin-top:0">Especialidades</div>
+
+          <div class="mi">
+            <div class="mi-name">Pollo Asado<small>Mayo, lechuga y tomate</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.75</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Pavo Asado<small>Mayo, lechuga y tomate</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.75</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Pernil Asado<small>Vegetales, lechuga y tomate</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Italiano<small>Pepperoni, pimientos, lechuga, tomate</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Salami o Mortadella<small>Con vegetales y condimentos</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$5.95</div>
+          </div>
+
+          <div class="section-head">Favoritos</div>
+
+          <div class="mi">
+            <div class="mi-name">Beeftrani<small>Roast beef, cebolla, lechuga, pimientos</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$8.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Tripleta Boricua <span class="badge">Popular</span><small>Pernil, pollo, papas, lechuga y tomate</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Steak &amp; Queso<small>Bistec, queso americano, lechuga</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Pastrami<small>Mostaza, cebolla y pimientos</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Cubano<small>Jamón, queso, pepinillo, mostaza y mayo</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Bacon Deluxe<small>Tocineta, queso, mayo, mostaza, encurtido</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.25</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: SANDWICHES -->
+        <div>
+          <div class="section-head" style="margin-top:0">Sandwiches</div>
+
+          <div class="mi">
+            <div class="mi-name">Bistec con Hipas<small>Papas fritas y condimentos</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$7.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Jamón, Queso &amp; Huevo<small>Pan artesanal con huevo y queso</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Jamón y Huevo<small>Pan artesanal con huevo revuelto</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$4.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Jamón y Queso<small>Clásico en pan artesanal</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$5.75</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Pavo Deli<small>Pavo y vegetales frescos</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.75</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Jamón Ahumado Bolo<small>Jamón ahumado en pan artesanal</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Tuna<small>Ensalada de atún, lechuga y tomate</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Tortilla<small>Tortilla de harina con vegetales</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.95</div>
+          </div>
+
+          <div class="section-head">Adicionales</div>
+          <div style="font-size:11px; color:var(--cream-dim); line-height:1.7; letter-spacing:0.5px; padding: 4px 0;">
+            Aguacate +$2 &nbsp;·&nbsp; Queso +$1 &nbsp;·&nbsp; Extra Shot +$0.50<br>
+            Vegetariano +$1 &nbsp;·&nbsp; Papas +$0.30
+          </div>
+
+          <div class="section-head" style="margin-top:14px">Elige tu Pan</div>
+          <div style="font-size:11px; color:var(--cream-dim); line-height:1.8; letter-spacing:0.5px; padding: 4px 0;">
+            Pan Sobao · Masa Madre · Ciabatta<br>
+            Baguette · Integral · Campesino
+          </div>
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+      <div class="footnote">Freshly made daily &nbsp;·&nbsp; @jaguasbakery &nbsp;·&nbsp; Todos los sandwiches en pan artesanal horneado ese día</div>
+    </div>
+
+    <div class="photo-panel">
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=820&q=85&fit=crop" alt="Sandwich gourmet">
+      </div>
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1555243896-c709bfa0b564?w=820&q=85&fit=crop" alt="Sandwich artesanal">
+      </div>
+    </div>
+
+  </div><!-- /s1 -->
+
+
+  <!-- ══════════ SLIDE 3 — DESAYUNO & CAFÉ ══════════ -->
+  <div class="slide" id="s2">
+
+    <div class="menu-col">
+
+      <div class="items-grid two">
+
+        <!-- LEFT: DESAYUNO -->
+        <div>
+          <div class="section-head" style="margin-top:0">Desayuno</div>
+
+          <div class="mi">
+            <div class="mi-name">Crema del Día (8oz)<small>Crema caliente con pan y acompañantes</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$3.25</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Revoltillo<small>Huevos revueltos con vegetales y queso</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$5.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Desayuno Completo<small>Huevos, jamón, queso y pan artesanal</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$5.75</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Tortilla<small>Tortilla de huevo con vegetales</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$5.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Sandwich de Tortilla<small>En pan artesanal con condimentos</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$6.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Tostadas con Mantequilla<small>Pan artesanal tostado con mantequilla</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$1.95</div>
+          </div>
+          <div class="mi">
+            <div class="mi-name">Tostadas con Queso<small>Pan artesanal con queso derretido</small></div>
+            <div class="mi-dots"></div><div class="mi-price">$2.50</div>
+          </div>
+
+          <div class="section-head">Libras Preparadas</div>
+
+          <div class="libras-grid">
+            <div>
+              <div class="mi" style="flex-direction:column; align-items:flex-start; gap:3px;">
+                <div class="mi-name">Pan Mantequilla</div>
+                <div style="font-size:10px; color:var(--cream-dim);">½lb $2.50 · 1lb $4.50 · 1½lb $6.50 · 2lb $8.50</div>
+              </div>
+              <div class="mi" style="flex-direction:column; align-items:flex-start; gap:3px;">
+                <div class="mi-name">Pan con Ajo</div>
+                <div style="font-size:10px; color:var(--cream-dim);">½lb $2.50 · 1lb $4.50 · 1½lb $6.50 · 2lb $8.50</div>
+              </div>
+              <div class="mi" style="flex-direction:column; align-items:flex-start; gap:3px;">
+                <div class="mi-name">Jamón, Queso &amp; Huevo</div>
+                <div style="font-size:10px; color:var(--cream-dim);">½lb $3.50 · 1lb $5.00 · 1½lb $7.50 · 2lb $9.50</div>
+              </div>
+            </div>
+            <div>
+              <div class="mi" style="flex-direction:column; align-items:flex-start; gap:3px;">
+                <div class="mi-name">Jamón y Queso</div>
+                <div style="font-size:10px; color:var(--cream-dim);">½lb $3.00 · 1lb $4.75 · 1½lb $7.00 · 2lb $9.00</div>
+              </div>
+              <div class="mi" style="flex-direction:column; align-items:flex-start; gap:3px;">
+                <div class="mi-name">J/Q/H + Mortadella</div>
+                <div style="font-size:10px; color:var(--cream-dim);">½lb $3.50 · 1lb $5.00 · 1½lb $7.50 · 2lb $9.50</div>
+              </div>
+              <div class="mi" style="flex-direction:column; align-items:flex-start; gap:3px;">
+                <div class="mi-name">Queso y Huevo</div>
+                <div style="font-size:10px; color:var(--cream-dim);">½lb $2.75 · 1lb $4.50 · 1½lb $6.50 · 2lb $8.50</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: CAFÉ -->
+        <div>
+          <div class="section-head" style="margin-top:0">Café &amp; Bebidas Calientes</div>
+
+          <div class="cafe-row">
+            <div class="cafe-row-name">Café con Leche</div>
+            <div class="cafe-row-prices">8oz <strong>$2.25</strong> · 12oz <strong>$2.75</strong> · 16oz <strong>$3.25</strong></div>
+          </div>
+          <div class="cafe-row">
+            <div class="cafe-row-name">Cappuccino</div>
+            <div class="cafe-row-prices">8oz <strong>$2.50</strong> · 12oz <strong>$3.00</strong> · 16oz <strong>$3.50</strong></div>
+          </div>
+          <div class="cafe-row">
+            <div class="cafe-row-name">Mocachino</div>
+            <div class="cafe-row-prices">8oz <strong>$2.75</strong> · 12oz <strong>$3.25</strong> · 16oz <strong>$3.75</strong></div>
+          </div>
+          <div class="cafe-row">
+            <div class="cafe-row-name">Chocolate Caliente</div>
+            <div class="cafe-row-prices">8oz <strong>$2.00</strong> · 12oz <strong>$2.50</strong></div>
+          </div>
+          <div class="cafe-row">
+            <div class="cafe-row-name">Té Caliente</div>
+            <div class="cafe-row-prices">8oz <strong>$1.50</strong> · 12oz <strong>$2.00</strong></div>
+          </div>
+          <div class="cafe-row">
+            <div class="cafe-row-name">Extra Shot de Espresso</div>
+            <div class="cafe-row-prices"><strong>+$0.50</strong></div>
+          </div>
+
+          <div class="section-head">Pasteles &amp; Dulces del Día</div>
+          <div style="font-size:11.5px; color:var(--cream-dim); line-height:1.9; letter-spacing:0.3px;">
+            Tres Leches · Flan · Cheesecake<br>
+            Budín · Tornillos · Besitos de Coco<br>
+            Quesitos · Boliquesitos · Almejas<br>
+            Apple Pie · Pineapple Pie
+          </div>
+          <div style="font-size:9.5px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; margin-top:8px;">
+            Pregunte por la disponibilidad del día
+          </div>
+
+          <div class="section-head" style="margin-top:16px">Horario</div>
+          <div style="font-size:13px; color:var(--cream); letter-spacing:1px; line-height:2;">
+            Lunes – Domingo &nbsp;<strong style="color:var(--gold);">6:00am – 7:00pm</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+      <div class="footnote">Buen Provecho &nbsp;·&nbsp; @jaguasbakery &nbsp;·&nbsp; Ingredientes etiqueta limpia · Sin aditivos artificiales</div>
+
+    </div>
+
+    <div class="photo-panel">
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=820&q=85&fit=crop" alt="Café artesanal">
+      </div>
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1533920379810-6bedac967b57?w=820&q=85&fit=crop" alt="Desayuno">
+      </div>
+      <div class="pf">
+        <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=820&q=85&fit=crop" alt="Pasteles">
+      </div>
+    </div>
+
+  </div><!-- /s2 -->
+
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="site-footer">
+    <div class="footer-qr">
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fjaguasbakery.com%2Fmenu&bgcolor=ffffff&color=0D0705"
+        alt="QR Menú">
+      <div class="qr-label">
+        <strong>Menú Digital</strong>
+        <span>Escanea para ver el menú completo</span>
+        <span>en tu teléfono</span>
+      </div>
+    </div>
+
+    <div class="footer-tagline">
+      <strong>"Freshly made daily"</strong><br>
+      <span style="font-size:12px; letter-spacing:1px;">Con amor desde Ciales, Puerto Rico</span>
+    </div>
+
+    <div class="footer-social">
+      <strong>@jaguasbakery</strong>
+      <span>Ciales, Puerto Rico</span><br>
+      <span style="color:var(--gold); font-size:9px; letter-spacing:1.5px;">6:00am – 7:00pm · 7 días</span>
+    </div>
+  </footer>
+
+  <!-- ══════════ PROGRESS BAR ══════════ -->
+  <div id="progress-bar"></div>
+
+</div><!-- /scaler -->
+
+
+<script>
+  /* ── Scale to fill any viewport ── */
+  const scaler = document.getElementById('scaler');
+  function setScale() {
+    const sx = window.innerWidth / 1920;
+    const sy = window.innerHeight / 1080;
+    const s  = Math.min(sx, sy);
+    scaler.style.transform = `scale(${s})`;
+    // Center if letterboxed
+    scaler.style.marginLeft = Math.max(0, (window.innerWidth  - 1920 * s) / 2) + 'px';
+    scaler.style.marginTop  = Math.max(0, (window.innerHeight - 1080 * s) / 2) + 'px';
+  }
+  setScale();
+  window.addEventListener('resize', setScale);
+
+  /* ── Slide rotation ── */
+  const slides    = document.querySelectorAll('.slide');
+  const dots      = [document.getElementById('d0'), document.getElementById('d1'), document.getElementById('d2')];
+  const titleEl   = document.getElementById('slide-title');
+  const subEl     = document.getElementById('slide-sub');
+  const counterEl = document.getElementById('counter');
+  const bar       = document.getElementById('progress-bar');
+
+  const DURATION = 13000; // ms per slide
+
+  const META = [
+    { title: 'Panes Artesanales',  sub: 'horneados diariamente' },
+    { title: 'Sandwiches',          sub: 'elige tu pan · sabor · artesanal' },
+    { title: 'Desayuno & Café',     sub: 'breakfast & bebidas calientes' },
+  ];
+
+  let current = 0;
+
+  function goTo(idx) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('on');
+
+    current = (idx + slides.length) % slides.length;
+
+    slides[current].classList.add('active');
+    dots[current].classList.add('on');
+    titleEl.textContent   = META[current].title;
+    subEl.textContent     = META[current].sub;
+    counterEl.textContent = `${current + 1} / ${slides.length}`;
+
+    /* Animate progress bar */
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.transition = `width ${DURATION}ms linear`;
+      bar.style.width = '100%';
+    }));
+  }
+
+  // Init
+  goTo(0);
+  setInterval(() => goTo(current + 1), DURATION);
+
+  /* ── Click anywhere to advance (handy for demo/remote) ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft')                   goTo(current - 1);
+  });
+</script>
+</body>
+</html>
